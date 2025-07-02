@@ -1,4 +1,5 @@
 using ContosoUniv.Data;
+using ContosoUniv.Repositories;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,7 @@ builder.Services.AddDbContext<SchoolContext>(options =>
 });
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddTransient<StudentRepository>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
