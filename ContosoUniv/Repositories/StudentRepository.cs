@@ -18,4 +18,13 @@ public  class StudentRepository
     {
         return await _context.Students.ToListAsync();
     }
+
+    public async Task<Student?> GetStudentById(int? id)
+    {
+        return await _context.Students
+            .Include(s => s.Enrollments)
+            .ThenInclude(e => e.Course)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(m => m.ID == id);
+    }
 }

@@ -18,4 +18,21 @@ public class StudentsController : Controller
         var students = await StudentRepository.GetStudents();
         return View(students);
     }
+
+    public async Task<IActionResult> Details(int? id)
+    {
+        if (id == null)
+        {
+            return NotFound();
+        }
+
+        var student =  await StudentRepository.GetStudentById(id);
+
+        if (student == null)
+        {
+            return NotFound();
+        }
+
+        return View(student);
+    }
 }
