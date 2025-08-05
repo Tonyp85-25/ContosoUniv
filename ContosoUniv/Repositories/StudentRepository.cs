@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ContosoUniv.Repositories;
 
-public  class StudentRepository
+public  class StudentRepository : IStudentRepository
 {
     private  readonly SchoolContext _context;
 
@@ -26,5 +26,11 @@ public  class StudentRepository
             .ThenInclude(e => e.Course)
             .AsNoTracking()
             .FirstOrDefaultAsync(m => m.ID == id);
+    }
+
+    public async Task<int> Create(Student student)
+    {
+        _context.Add(student);
+       return  await _context.SaveChangesAsync();
     }
 }

@@ -20,7 +20,7 @@ builder.Services.AddDbContext<SchoolContext>(options =>
 });
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-builder.Services.AddTransient<StudentRepository>();
+builder.Services.AddTransient<IStudentRepository,StudentRepository>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

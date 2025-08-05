@@ -1,13 +1,15 @@
+using ContosoUniv.Models;
 using ContosoUniv.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ContosoUniv.Controllers;
 
 public class StudentsController : Controller
 {
-    private  StudentRepository StudentRepository { get; init; }
+    private  IStudentRepository StudentRepository { get; init; }
 
-    public StudentsController(StudentRepository studentRepository)
+    public StudentsController(IStudentRepository studentRepository)
     {
         StudentRepository = studentRepository;
     }
@@ -34,5 +36,32 @@ public class StudentsController : Controller
         }
 
         return View(student);
+    }
+
+    public IActionResult Create()
+    {
+        return View();
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(
+         Student student)
+    {
+   
+        try
+        {
+            if (ModelState.IsValid)
+            {
+               await  StudentRepository.Create(student);
+               return RedirectToAction(nameof(Index));
+            }
+        }
+        catch (DbUpdateException ex)
+        {
+            ModelState.AddModelError("","Unable to save changes");
+        }
+        return View(student);
+       
     }
 }
