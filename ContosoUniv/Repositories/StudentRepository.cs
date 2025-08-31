@@ -25,12 +25,24 @@ public  class StudentRepository : IStudentRepository
             .Include(s => s.Enrollments)
             .ThenInclude(e => e.Course)
             .AsNoTracking()
-            .FirstOrDefaultAsync(m => m.ID == id);
+            .FirstOrDefaultAsync(m => m.Id == id);
     }
 
     public async Task<int> Create(Student student)
     {
         _context.Add(student);
        return  await _context.SaveChangesAsync();
+    }
+
+    public async Task<int> Update(Student student)
+    {
+        _context.Update(student);
+        return await _context.SaveChangesAsync();
+    }
+
+    public async Task<int> Remove(Student student)
+    {
+        _context.Students.Remove(student);
+        return await _context.SaveChangesAsync();
     }
 }

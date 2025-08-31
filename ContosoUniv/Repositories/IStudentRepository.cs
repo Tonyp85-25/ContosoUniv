@@ -7,4 +7,7 @@ public interface IStudentRepository
     Task<List<Student>> GetStudents();
     Task<Student?> GetStudentById(int? id);
     Task<int> Create(Student student);
+    
+    Task<int> Update(Student student);
+    Task<int> Remove(Student student);
 }

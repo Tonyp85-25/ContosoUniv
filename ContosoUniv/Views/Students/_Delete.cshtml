@@ -1,0 +1,32 @@
+
+
+<dialog >
+    <h6>Do you really want to delete this student? </h6>
+    <p class="text-danger">@ViewData["ErrorMessage"]</p>
+    <form id="delete-form" method="dialog">
+        <button type="button">No</button>
+        <button type="submit">Yes</button>
+    </form>
+</dialog>
+
+<script>
+    const studentsDelete = document.getElementsByName("delete-student");
+    const form = document.querySelector("#delete-form");
+    const dialog  = document.querySelector("dialog");
+    studentsDelete.forEach((btn)=>{
+        btn.addEventListener("click",(e)=>{
+            e.preventDefault();
+            e.stopPropagation();
+            dialog.show();
+            form.addEventListener("submit",async()=>{
+                const id = btn.dataset.id;
+                const response  = await fetch(`/Students/Delete/${id}`,{
+                    method:"POST",body:{id}
+                });
+                const html = await response.text();
+                document.body.innerHTML =html;
+            })
+        })
+    });
+    
+</script>
