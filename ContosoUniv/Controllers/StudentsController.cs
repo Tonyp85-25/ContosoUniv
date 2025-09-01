@@ -21,8 +21,8 @@ public class StudentsController : Controller
         return View();
     }
 
-    [Route("/student-list/{filter?}")]
-    public IActionResult SearchStudents(string? filter)
+    [Route("/student-list/")]
+    public IActionResult SearchStudents([FromQuery]string? filter)
     {
         return ViewComponent("StudentList", new { filter });
     }

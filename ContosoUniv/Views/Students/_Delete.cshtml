@@ -9,37 +9,3 @@
     </form>
 </dialog>
 
-<script>
-    function activateDeletion(){
-        const studentsDelete = document.querySelectorAll(".delete-student");
-
-        const form = document.querySelector("#delete-form");
-        const url ={href:""}
-        const dialog  = document.querySelector("dialog");
-
-        studentsDelete.forEach((btn)=>{
-            btn.addEventListener("click",(e)=> {
-                e.preventDefault();
-                url.href=btn.href
-                dialog.show();
-            })
-        });
-        form.addEventListener("submit",async(ev)=>{
-            ev.preventDefault();
-            const response  = await fetch(url.href,{
-                method:"POST",
-            });
-            const html = await response.text();
-            url.href="";
-            document.querySelector("tbody").innerHTML =html;
-            activateDeletion();
-            dialog.close();
-        });
-        form.addEventListener("reset",()=>{
-            url.href="";
-            dialog.close();
-        });
-    }
-   activateDeletion();
-    
-</script>

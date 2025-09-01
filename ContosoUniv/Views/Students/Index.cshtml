@@ -2,6 +2,8 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+@await Html.PartialAsync("_SearchBar")
 <table class="table">
     <thead>
     <tr>
@@ -23,3 +25,47 @@
 </table>
 
 @await Html.PartialAsync("_Delete")
+<script>
+    const fetchStudents = async()=>{
+        const search = document.querySelector("#search-filter").value;
+        const response = await fetch(`/student-list?filter=${search}`);
+        const html =await response.text();
+        document.querySelector("tbody").innerHTML=html;
+    }
+    function activateDeletion(){
+        const studentsDelete = document.querySelectorAll(".delete-student");
+
+        const form = document.querySelector("#delete-form");
+        const url ={href:""}
+        const dialog  = document.querySelector("dialog");
+
+        studentsDelete.forEach((btn)=>{
+            btn.addEventListener("click",(e)=> {
+                e.preventDefault();
+                url.href=btn.href
+                dialog.show();
+            })
+        });
+        form.addEventListener("submit",async(ev)=>{
+            ev.preventDefault();
+            await fetch(url.href,{
+                method:"POST",
+            });
+            url.href="";
+            await fetchStudents();
+            activateDeletion();
+            dialog.close();
+        });
+        form.addEventListener("reset",()=>{
+            url.href="";
+            dialog.close();
+        });
+    }
+    activateDeletion();
+    const searchButton =document.querySelector("#search-button");
+    searchButton.addEventListener("click",async ()=>{
+        await fetchStudents();
+       activateDeletion();
+        
+    })
+</script>
