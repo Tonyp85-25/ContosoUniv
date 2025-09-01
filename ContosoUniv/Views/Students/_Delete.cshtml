@@ -3,30 +3,43 @@
 <dialog >
     <h6>Do you really want to delete this student? </h6>
     <p class="text-danger">@ViewData["ErrorMessage"]</p>
-    <form id="delete-form" method="dialog">
-        <button type="button">No</button>
+    <form id="delete-form">
+        <button type="reset">No</button>
         <button type="submit">Yes</button>
     </form>
 </dialog>
 
 <script>
-    const studentsDelete = document.getElementsByName("delete-student");
-    const form = document.querySelector("#delete-form");
-    const dialog  = document.querySelector("dialog");
-    studentsDelete.forEach((btn)=>{
-        btn.addEventListener("click",(e)=>{
-            e.preventDefault();
-            e.stopPropagation();
-            dialog.show();
-            form.addEventListener("submit",async()=>{
-                const id = btn.dataset.id;
-                const response  = await fetch(`/Students/Delete/${id}`,{
-                    method:"POST",body:{id}
-                });
-                const html = await response.text();
-                document.body.innerHTML =html;
+    function activateDeletion(){
+        const studentsDelete = document.querySelectorAll(".delete-student");
+
+        const form = document.querySelector("#delete-form");
+        const url ={href:""}
+        const dialog  = document.querySelector("dialog");
+
+        studentsDelete.forEach((btn)=>{
+            btn.addEventListener("click",(e)=> {
+                e.preventDefault();
+                url.href=btn.href
+                dialog.show();
             })
-        })
-    });
+        });
+        form.addEventListener("submit",async(ev)=>{
+            ev.preventDefault();
+            const response  = await fetch(url.href,{
+                method:"POST",
+            });
+            const html = await response.text();
+            url.href="";
+            document.querySelector("tbody").innerHTML =html;
+            activateDeletion();
+            dialog.close();
+        });
+        form.addEventListener("reset",()=>{
+            url.href="";
+            dialog.close();
+        });
+    }
+   activateDeletion();
     
 </script>

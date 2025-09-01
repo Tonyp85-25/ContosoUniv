@@ -17,8 +17,14 @@ public class StudentsController : Controller
     // GET
     public async Task<IActionResult> Index()
     {
-        var students = await StudentRepository.GetStudents();
-        return View(students);
+       
+        return View();
+    }
+
+    [Route("/student-list/{filter?}")]
+    public IActionResult SearchStudents(string? filter)
+    {
+        return ViewComponent("StudentList", new { filter });
     }
 
     public async Task<IActionResult> Details(int? id)
@@ -48,7 +54,6 @@ public class StudentsController : Controller
     public async Task<IActionResult> Create(
         Student student)
     {
-
         try
         {
             if (ModelState.IsValid)
@@ -63,7 +68,6 @@ public class StudentsController : Controller
         }
 
         return View(student);
-
     }
 
     public async Task<IActionResult> Edit(int? id)
@@ -74,7 +78,7 @@ public class StudentsController : Controller
         }
 
         var student = await StudentRepository.GetStudentById(id);
-        if( student == null)
+        if (student == null)
         {
             return NotFound();
         }
@@ -84,11 +88,8 @@ public class StudentsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit( Student student)
+    public async Task<IActionResult> Edit(Student student)
     {
-      
-        
-
         if (ModelState.IsValid)
         {
             try
@@ -97,12 +98,12 @@ public class StudentsController : Controller
             }
             catch (Exception e)
             {
-                    Console.WriteLine(e);
-                    ModelState.AddModelError("", "Unable to save changes. " +
-                                                 "Try again, and if the problem persists, " +
-                                                 "see your system administrator.");
-            
+                Console.WriteLine(e);
+                ModelState.AddModelError("", "Unable to save changes. " +
+                                             "Try again, and if the problem persists, " +
+                                             "see your system administrator.");
             }
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -112,10 +113,11 @@ public class StudentsController : Controller
     public async Task<IActionResult> Delete(int id)
     {
         var student = await StudentRepository.GetStudentById(id);
-        if( student == null)
+        if (student == null)
         {
             return NotFound();
         }
+
         try
         {
             await StudentRepository.Remove(student);
@@ -126,9 +128,9 @@ public class StudentsController : Controller
             ModelState.AddModelError("", "Unable to save changes. " +
                                          "Try again, and if the problem persists, " +
                                          "see your system administrator.");
-            
         }
-        return RedirectToAction(nameof(Index));
-        
+
+
+        return ViewComponent("StudentList");
     }
 }

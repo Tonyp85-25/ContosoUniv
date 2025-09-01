@@ -14,9 +14,18 @@ public  class StudentRepository : IStudentRepository
     }
 
 
-    public  async Task<List<Student>> GetStudents()
+    public  async Task<List<Student>> GetStudents(string?filter)
     {
-        return await _context.Students.ToListAsync();
+        if (string.IsNullOrEmpty(filter) || string.IsNullOrWhiteSpace(filter))
+        {
+            return await _context.Students.ToListAsync();
+        }
+
+        var students =
+            _context.Students.Where(s => s.LastName.Contains(filter) || s.FirstMidName.Contains(filter));
+
+        return await students.AsNoTracking().ToListAsync();
+
     }
 
     public async Task<Student?> GetStudentById(int? id)
