@@ -16,8 +16,8 @@ public class SchoolContext : DbContext
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Course>().ToTable("Course");
-        modelBuilder.Entity<Enrollment>().ToTable("Enrollment");
-        modelBuilder.Entity<Student>().ToTable("Student");
+        modelBuilder.Entity<Course>().ToTable("Course").Property(x=>x.publicId).HasConversion(id => id.Value,value=>new CourseId(value)).IsRequired();
+        modelBuilder.Entity<Enrollment>().ToTable("Enrollment").Property(x=>x.publicId).HasConversion(id => id.Value,value=>new EnrollmentId(value)).IsRequired();
+        modelBuilder.Entity<Student>().ToTable("Student").Property(x=>x.publicId).HasConversion(id => id.Value,value=>new StudentId(value)).IsRequired();
     }
 }

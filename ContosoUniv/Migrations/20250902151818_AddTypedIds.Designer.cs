@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ContosoUniv.Migrations
 {
     [DbContext(typeof(SchoolContext))]
-    [Migration("20250902124240_ModelValidation")]
-    partial class ModelValidation
+    [Migration("20250902151818_AddTypedIds")]
+    partial class AddTypedIds
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,43 +27,53 @@ namespace ContosoUniv.Migrations
 
             modelBuilder.Entity("ContosoUniv.Models.Course", b =>
                 {
-                    b.Property<int>("CourseID")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Credits")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
 
-                    b.HasKey("CourseID");
+                    b.Property<Guid>("publicId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
 
                     b.ToTable("Course", (string)null);
                 });
 
             modelBuilder.Entity("ContosoUniv.Models.Enrollment", b =>
                 {
-                    b.Property<int>("EnrollmentID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EnrollmentID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CourseID")
+                    b.Property<int>("CourseId")
                         .HasColumnType("int");
 
                     b.Property<int?>("Grade")
                         .HasColumnType("int");
 
-                    b.Property<int>("StudentID")
+                    b.Property<int>("StudentId")
                         .HasColumnType("int");
 
-                    b.HasKey("EnrollmentID");
+                    b.Property<Guid>("publicId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasIndex("CourseID");
+                    b.HasKey("Id");
 
-                    b.HasIndex("StudentID");
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("StudentId");
 
                     b.ToTable("Enrollment", (string)null);
                 });
@@ -89,6 +99,9 @@ namespace ContosoUniv.Migrations
                         .HasMaxLength(60)
                         .HasColumnType("nvarchar(60)");
 
+                    b.Property<Guid>("publicId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.ToTable("Student", (string)null);
@@ -98,13 +111,13 @@ namespace ContosoUniv.Migrations
                 {
                     b.HasOne("ContosoUniv.Models.Course", "Course")
                         .WithMany("Enrollments")
-                        .HasForeignKey("CourseID")
+                        .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ContosoUniv.Models.Student", "Student")
                         .WithMany("Enrollments")
-                        .HasForeignKey("StudentID")
+                        .HasForeignKey("StudentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

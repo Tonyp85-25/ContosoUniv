@@ -27,14 +27,14 @@ public class StudentsController : Controller
         return ViewComponent("StudentList", new { filter });
     }
 
-    public async Task<IActionResult> Details(int? id)
+    public async Task<IActionResult> Details(Guid? id)
     {
         if (id == null)
         {
             return NotFound();
         }
 
-        var student = await StudentRepository.GetStudentById(id);
+        var student = await StudentRepository.GetStudentById(id.Value);
 
         if (student == null)
         {
@@ -70,14 +70,15 @@ public class StudentsController : Controller
         return View(student);
     }
 
-    public async Task<IActionResult> Edit(int? id)
+    [HttpGet]
+    public async Task<IActionResult> Edit(Guid? id)
     {
-        if (id == null)
+        if (!id.HasValue)
         {
             return NotFound();
         }
 
-        var student = await StudentRepository.GetStudentById(id);
+        var student = await StudentRepository.GetStudentById(id.Value);
         if (student == null)
         {
             return NotFound();
@@ -110,7 +111,7 @@ public class StudentsController : Controller
         return View(student);
     }
 
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         var student = await StudentRepository.GetStudentById(id);
         if (student == null)

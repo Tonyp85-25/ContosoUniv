@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// via dotnet cli
 var strBuilder = new SqlConnectionStringBuilder(builder.Configuration.GetConnectionString("DefaultConnection"));
 strBuilder.DataSource = builder.Configuration["DbHost"];
 strBuilder.InitialCatalog = builder.Configuration["DbName"];

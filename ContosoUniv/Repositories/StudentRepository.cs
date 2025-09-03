@@ -28,13 +28,13 @@ public  class StudentRepository : IStudentRepository
 
     }
 
-    public async Task<Student?> GetStudentById(int? id)
+    public async Task<Student?> GetStudentById(Guid id)
     {
         return await _context.Students
             .Include(s => s.Enrollments)
             .ThenInclude(e => e.Course)
             .AsNoTracking()
-            .FirstOrDefaultAsync(m => m.Id == id);
+            .FirstOrDefaultAsync(m => m.publicId == new StudentId(id));
     }
 
     public async Task<int> Create(Student student)
