@@ -1,28 +1,18 @@
+@using ContosoUniv.Controllers
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
 
+
+
 @await Html.PartialAsync("_SearchBar")
-<table class="table">
-    <thead>
-    <tr>
-        <th>
-            LastName
-        </th>
-        <th>
-            FirstMidName
-        </th>
-        <th>
-            EnrollmentDate
-        </th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    @await Component.InvokeAsync("StudentList", new {filter=""})
-    </tbody>
-</table>
+
+@await Component.InvokeAsync("StudentList", new {filter="",pageNumber=ViewData["pageNumber"]??1,nameOrder=ViewData["nameOrder"]??SortDirection.Ascending})
+
+
+
+
 
 @await Html.PartialAsync("_Delete")
 <script>

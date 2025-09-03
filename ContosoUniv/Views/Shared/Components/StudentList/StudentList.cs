@@ -1,3 +1,6 @@
+using ContosoUniv.Controllers;
+using ContosoUniv.Lib;
+using ContosoUniv.Models;
 using ContosoUniv.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,9 +16,11 @@ public class StudentList: ViewComponent
     }
 
 
-    public async Task <IViewComponentResult> InvokeAsync(string? filter)
+    public async Task <IViewComponentResult> InvokeAsync(string? filter, int? pageNumber, SortDirection? nameOrder)
     {
-        var students = await StudentRepository.GetStudents(filter);
-        return View(students);
+        var students = await StudentRepository.GetStudents(filter, nameOrder);
+        int pageSize = 10;
+        var list = PaginatedList<Student>.Create(students, pageNumber ?? 1, pageSize);
+        return View(list);
     }
 }

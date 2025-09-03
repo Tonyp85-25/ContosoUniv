@@ -5,6 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ContosoUniv.Controllers;
 
+public enum SortDirection
+{
+    Ascending,
+    Descending,
+}
 public class StudentsController : Controller
 {
     private IStudentRepository StudentRepository { get; init; }
@@ -15,9 +20,17 @@ public class StudentsController : Controller
     }
 
     // GET
-    public async Task<IActionResult> Index()
+    public IActionResult Index([FromQuery] int? pageNumber, [FromQuery] SortDirection? nameOrder)
     {
-       
+        if (pageNumber.HasValue)
+        {
+            ViewData["pageNumber"] = pageNumber.Value;
+        }
+
+        if (nameOrder is null)
+        {
+            ViewData["nameOrder"] = SortDirection.Descending;
+        }
         return View();
     }
 
