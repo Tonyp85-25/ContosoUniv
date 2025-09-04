@@ -1,14 +1,16 @@
+@using ContosoUniv.Lib
 @model ContosoUniv.Lib.PaginatedList<Student>
 
 @{
     var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
     var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+    var nameOrder = ViewData["nameOrder"] is SortDirection.Descending ? SortDirection.Ascending : SortDirection.Descending;
 }
 <table class="table">
     <thead>
     <tr>
         <th>
-            <a asp-action="Index" asp-route-nameOrder="@ViewData["nameOrder"]"> LastName </a> 
+            <a asp-action="Index" asp-route-nameOrder="@nameOrder"> LastName </a> 
            
         </th>
         <th>
@@ -32,6 +34,6 @@
 </table>
 
 <div class="align-baseline">
-    <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex-1)"  class="btn btn-default @prevDisabled">Previous</a>
-    <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex+1)"  class="btn btn-default @nextDisabled">Next</a>
+    <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex-1)" asp-route-nameOrder="@ViewData["nameOrder"]" class="btn btn-default @prevDisabled">Previous</a>
+    <a asp-action="Index" asp-route-pageNumber="@(Model.PageIndex+1)" asp-route-nameOrder="@ViewData["nameOrder"]" class="btn btn-default @nextDisabled">Next</a>
 </div>

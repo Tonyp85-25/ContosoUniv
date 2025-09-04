@@ -1,3 +1,4 @@
+using ContosoUniv.Lib;
 using ContosoUniv.Models;
 using ContosoUniv.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -5,11 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ContosoUniv.Controllers;
 
-public enum SortDirection
-{
-    Ascending,
-    Descending,
-}
+
 public class StudentsController : Controller
 {
     private IStudentRepository StudentRepository { get; init; }
@@ -27,10 +24,9 @@ public class StudentsController : Controller
             ViewData["pageNumber"] = pageNumber.Value;
         }
 
-        if (nameOrder is null)
-        {
-            ViewData["nameOrder"] = SortDirection.Descending;
-        }
+       
+            ViewData["nameOrder"] = nameOrder??SortDirection.Ascending;
+        
         return View();
     }
 
