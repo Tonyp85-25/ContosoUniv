@@ -8,9 +8,9 @@ namespace ContosoUniv.Views.Shared.Components.StudentList;
 
 public class StudentList: ViewComponent
 {
-    public IStudentRepository StudentRepository { get; }
+    public StudentRepository StudentRepository { get; }
 
-    public StudentList(IStudentRepository studentRepository)
+    public StudentList(StudentRepository studentRepository)
     {
         StudentRepository = studentRepository;
     }

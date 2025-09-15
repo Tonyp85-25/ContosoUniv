@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.Logging.ClearProviders().AddConsole();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -21,7 +23,10 @@ builder.Services.AddDbContext<SchoolContext>(options =>
 });
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-builder.Services.AddTransient<IStudentRepository,StudentRepository>();
+
+builder.Services.AddTransient<StudentRepository>();
+builder.Services.AddTransient<CourseRepository>();
+builder.Services.AddTransient<EnrollmentRepository>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

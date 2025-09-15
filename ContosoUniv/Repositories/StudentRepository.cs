@@ -6,15 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ContosoUniv.Repositories;
 
-public class StudentRepository : IStudentRepository
+public class StudentRepository : EfRepository
 {
-    private readonly SchoolContext _context;
-
-    public StudentRepository(SchoolContext context)
+    public StudentRepository(SchoolContext context, ILogger<StudentRepository> logger) : base(context, logger)
     {
-        _context = context;
     }
-
 
     public async Task<List<Student>> GetStudents(string? filter, SortDirection? nameOrder)
     {
@@ -44,21 +40,23 @@ public class StudentRepository : IStudentRepository
             .FirstOrDefaultAsync(m => m.publicId == new StudentId(id));
     }
 
-    public async Task<int> Create(Student student)
+    public async Task<Result> Create(Student student)
     {
         _context.Add(student);
-        return await _context.SaveChangesAsync();
+        return await Save();
     }
 
-    public async Task<int> Update(Student student)
+    public async Task<Result> Update(Student student)
     {
         _context.Update(student);
-        return await _context.SaveChangesAsync();
+        return await Save();
     }
 
-    public async Task<int> Remove(Student student)
+    public async Task<Result> Remove(Student student)
     {
         _context.Students.Remove(student);
-        return await _context.SaveChangesAsync();
+        return await Save();
     }
+    
+    
 }

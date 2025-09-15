@@ -1,3 +1,4 @@
+using ContosoUniv.Commands.StudentEnrollment;
 using ContosoUniv.Lib;
 using ContosoUniv.Models;
 using ContosoUniv.Repositories;
@@ -7,14 +8,12 @@ using Microsoft.EntityFrameworkCore;
 namespace ContosoUniv.Controllers;
 
 
-public class StudentsController : Controller
+public class StudentsController(StudentRepository studentRepository, CourseRepository courseRepository,EnrollmentRepository enrollmentRepository)
+    : Controller
 {
-    private IStudentRepository StudentRepository { get; init; }
-
-    public StudentsController(IStudentRepository studentRepository)
-    {
-        StudentRepository = studentRepository;
-    }
+    private StudentRepository StudentRepository { get;  } = studentRepository;
+    private CourseRepository CourseRepository { get;  } = courseRepository;
+    private EnrollmentRepository EnrollmentRepository { get; } = enrollmentRepository;
 
     // GET
     public IActionResult Index([FromQuery] int? pageNumber, [FromQuery] SortDirection? nameOrder)
@@ -23,9 +22,8 @@ public class StudentsController : Controller
         {
             ViewData["pageNumber"] = pageNumber.Value;
         }
-
-       
-            ViewData["nameOrder"] = nameOrder??SortDirection.Ascending;
+        
+        ViewData["nameOrder"] = nameOrder??SortDirection.Ascending;
         
         return View();
     }
@@ -63,19 +61,13 @@ public class StudentsController : Controller
     public async Task<IActionResult> Create(
         Student student)
     {
-        try
+        if (!ModelState.IsValid) return View(student);
+        var result=  await StudentRepository.Create(student);
+        if (result.IsSuccess)
         {
-            if (ModelState.IsValid)
-            {
-                await StudentRepository.Create(student);
-                return RedirectToAction(nameof(Index));
-            }
+            return RedirectToAction(nameof(Index));
         }
-        catch (DbUpdateException ex)
-        {
-            ModelState.AddModelError("", "Unable to save changes");
-        }
-
+        ModelState.AddModelError("", "Unable to save changes");
         return View(student);
     }
 
@@ -93,6 +85,10 @@ public class StudentsController : Controller
             return NotFound();
         }
 
+        var courses = await CourseRepository.GetAll();
+        var enrollments = student.Enrollments.ToList();
+        ViewBag.EnrollmentViewModel = new EnrollmentViewModel(student.publicId, courses, enrollments) as EnrollmentViewModel;
+
         return View(student);
     }
 
@@ -100,24 +96,18 @@ public class StudentsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Student student)
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid) return View(student);
+        var result =   await StudentRepository.Update(student);
+
+        if (result.IsFailure)
         {
-            try
-            {
-                await StudentRepository.Update(student);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                ModelState.AddModelError("", "Unable to save changes. " +
-                                             "Try again, and if the problem persists, " +
-                                             "see your system administrator.");
-            }
-
-            return RedirectToAction(nameof(Index));
+            ModelState.AddModelError("", "Unable to save changes. " +
+                                         "Try again, and if the problem persists, " +
+                                         "see your system administrator.");
         }
+            
+        return RedirectToAction(nameof(Index));
 
-        return View(student);
     }
 
     public async Task<IActionResult> Delete(Guid id)
@@ -127,20 +117,40 @@ public class StudentsController : Controller
         {
             return NotFound();
         }
+        
+        var result = await StudentRepository.Remove(student);
 
-        try
+        if (result.IsFailure)
         {
-            await StudentRepository.Remove(student);
+            ModelState.AddModelError("", "Unable to save changes. " +
+                                         "Try again, and if the problem persists, " +
+                                         "see your system administrator.");
         }
-        catch (Exception e)
+            
+        
+
+
+        return ViewComponent("StudentList");
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Enroll(StudentEnrollmentCommandRequest request )
+    {
+       
+        if(!ModelState.IsValid) return RedirectToAction(nameof(Edit),new RouteValueDictionary{{"id",request.StudentId}});
+        var handler = new StudentEnrollmentCommandHandler(StudentRepository, CourseRepository,EnrollmentRepository );
+        var command =StudentEnrollmentCommand.FromRequest(request);
+        var result = await handler.Handle(command);
+
+        if (result.IsFailure)
         {
-            Console.WriteLine(e);
             ModelState.AddModelError("", "Unable to save changes. " +
                                          "Try again, and if the problem persists, " +
                                          "see your system administrator.");
         }
 
-
-        return ViewComponent("StudentList");
+        return RedirectToAction(nameof(Edit),new RouteValueDictionary{{"id",request.StudentId}});
     }
+    
 }

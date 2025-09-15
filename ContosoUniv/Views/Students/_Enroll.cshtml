@@ -1,0 +1,18 @@
+@model EnrollmentViewModel
+
+<div class="col-md-4">
+    <form asp-action="Enroll" asp-controller="Students">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="StudentId" value="@Model.StudentId.Value"/>
+        <label asp-for="CoursesIds" class="control-label">Courses</label>
+        <select
+            class="form-select"
+            asp-for="CoursesIds"
+            asp-items="Model.CoursesItems"></select>
+        <span asp-validation-for="CoursesIds" class="text-danger"></span>
+        <div class="form-group">
+            <input type="submit" value="Enroll" class="btn btn-primary"/>
+        </div>
+
+    </form>
+</div>

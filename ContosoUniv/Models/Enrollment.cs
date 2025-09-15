@@ -12,7 +12,7 @@ public class Enrollment
 {
     public int Id { get; set; }
     
-    public EnrollmentId publicId { get; private set; }
+    public EnrollmentId PublicId { get; private set; }= new(Guid.NewGuid());
     
     public int CourseId { get; set; }
     

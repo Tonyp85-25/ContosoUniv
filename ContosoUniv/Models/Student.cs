@@ -22,4 +22,9 @@ public class Student
     
     // initial values compulsory to avoid modelState error if not provided
     public ICollection<Enrollment> Enrollments { get; set; } = new List<Enrollment>();
+
+    public bool HasEnrollment(int courseId)
+    {
+        return Enrollments.FirstOrDefault(e => e.CourseId == courseId) != null;
+    }
 }

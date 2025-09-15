@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "Edit ";
     Layout = "_Layout";
+    EnrollmentViewModel model = ViewBag.EnrollmentViewModel;
 }
 
 <h1>Edit </h1>
@@ -33,6 +34,8 @@
             </div>
         </form>
     </div>
+    @await Html.PartialAsync("_Enroll",model)
+  
 </div>
 
 <div>
