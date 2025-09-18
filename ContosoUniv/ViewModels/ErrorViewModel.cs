@@ -1,4 +1,4 @@
-namespace ContosoUniv.Models;
+namespace ContosoUniv.ViewModels;
 
 public class ErrorViewModel
 {

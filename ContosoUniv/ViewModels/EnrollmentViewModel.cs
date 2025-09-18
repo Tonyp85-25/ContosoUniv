@@ -1,6 +1,7 @@
+using ContosoUniv.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace ContosoUniv.Models;
+namespace ContosoUniv.ViewModels;
 
 public sealed record EnrollmentViewModel
 {

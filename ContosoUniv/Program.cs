@@ -1,4 +1,6 @@
+using System.Security.Claims;
 using ContosoUniv.Data;
+using ContosoUniv.Models;
 using ContosoUniv.Repositories;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +29,25 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddTransient<StudentRepository>();
 builder.Services.AddTransient<CourseRepository>();
 builder.Services.AddTransient<EnrollmentRepository>();
+builder.Services.AddTransient<UserRepository>();
+
+builder.Services.AddAuthentication().AddCookie("CookieScheme",options =>
+{
+    options.Cookie.HttpOnly= true;
+    options.Cookie.Name = "CookieScheme";
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+    options.LoginPath = "/Login/Login";
+}) ;
+
+builder.Services.AddAuthorization(options =>
+
+    options.AddPolicy("EmployeeOnly", policy =>
+    {
+        policy.RequireClaim(ClaimTypes.Role, Role.Employee.ToString());
+    })
+);
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -51,6 +72,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

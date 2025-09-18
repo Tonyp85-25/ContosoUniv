@@ -2,12 +2,15 @@ using ContosoUniv.Commands.StudentEnrollment;
 using ContosoUniv.Lib;
 using ContosoUniv.Models;
 using ContosoUniv.Repositories;
+using ContosoUniv.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ContosoUniv.Controllers;
 
 
+[Authorize]
 public class StudentsController(StudentRepository studentRepository, CourseRepository courseRepository,EnrollmentRepository enrollmentRepository)
     : Controller
 {
@@ -51,6 +54,7 @@ public class StudentsController(StudentRepository studentRepository, CourseRepos
         return View(student);
     }
 
+    [Authorize(Policy="EmployeeOnly")]
     public IActionResult Create()
     {
         return View();
@@ -58,6 +62,7 @@ public class StudentsController(StudentRepository studentRepository, CourseRepos
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Policy="EmployeeOnly")]
     public async Task<IActionResult> Create(
         Student student)
     {
@@ -72,6 +77,7 @@ public class StudentsController(StudentRepository studentRepository, CourseRepos
     }
 
     [HttpGet]
+    [Authorize(Policy="EmployeeOnly")]
     public async Task<IActionResult> Edit(Guid? id)
     {
         if (!id.HasValue)
@@ -94,6 +100,7 @@ public class StudentsController(StudentRepository studentRepository, CourseRepos
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Policy="EmployeeOnly")]
     public async Task<IActionResult> Edit(Student student)
     {
         if (!ModelState.IsValid) return View(student);
@@ -110,6 +117,7 @@ public class StudentsController(StudentRepository studentRepository, CourseRepos
 
     }
 
+    [Authorize(Policy="EmployeeOnly")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var student = await StudentRepository.GetStudentById(id);
@@ -135,6 +143,7 @@ public class StudentsController(StudentRepository studentRepository, CourseRepos
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Policy="EmployeeOnly")]
     public async Task<IActionResult> Enroll(StudentEnrollmentCommandRequest request )
     {
        

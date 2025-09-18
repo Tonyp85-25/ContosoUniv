@@ -1,0 +1,16 @@
+@if (User.Identity is not null && User.Identity.IsAuthenticated)
+{
+    <form method="post" asp-action="LogOut" asp-controller="Login" class="d-inline-flex">
+        <p>Welcome dear user</p>
+        <button type="submit" class="btn btn-link" value="Log Out">Log Out</button>
+    </form>
+}
+else
+{
+    <div
+    >
+        <a class="link-info" asp-action="Login" asp-controller="Login">Log in</a>
+    </div>
+    
+}
+

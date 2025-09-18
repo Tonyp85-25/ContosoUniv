@@ -1,3 +1,4 @@
+using ContosoUniv.Lib;
 using ContosoUniv.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,8 +39,8 @@ public static class SeedData
                 );
             
             context.Users.AddRange(
-                new User{EmailAddress = "user@test.com",Password = config["UserSecret"], Role = Role.Employee},
-                new User{ EmailAddress = "admin@test.com", Password = config["AdminSecret"],Role= Role.Administrator}
+                new User{EmailAddress = "user@test.com",Password = PasswordHasher.HashPassword(config["UserSecret"]) , Role = Role.Employee},
+                new User{ EmailAddress = "admin@test.com", Password =PasswordHasher.HashPassword(config["AdminSecret"]) ,Role= Role.Administrator}
                 );
             
             context.SaveChanges();

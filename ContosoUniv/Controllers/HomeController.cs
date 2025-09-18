@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using ContosoUniv.Models;
+using ContosoUniv.ViewModels;
 
 namespace ContosoUniv.Controllers;
 
